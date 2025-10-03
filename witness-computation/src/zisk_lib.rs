@@ -8,6 +8,7 @@ use executor::{StateMachines, StaticSMBundle, ZiskExecutor};
 use fields::{Goldilocks, PrimeField64};
 use pil_std_lib::Std;
 use proofman::register_std;
+use proofman_common::ProofmanResult;
 use std::{any::Any, path::PathBuf, sync::Arc};
 use witness::{WitnessLibrary, WitnessManager};
 use zisk_core::{Riscv2zisk, CHUNK_SIZE};
@@ -87,7 +88,7 @@ impl<F: PrimeField64> WitnessLibrary<F> for WitnessLib<F> {
     ///
     /// # Panics
     /// Panics if the `Riscv2zisk` conversion fails or if required paths cannot be resolved.
-    fn register_witness(&mut self, wcm: &WitnessManager<F>) {
+    fn register_witness(&mut self, wcm: &WitnessManager<F>) -> ProofmanResult<()> {
         // Step 1: Create an instance of the RISCV -> ZisK program converter
         let rv2zk = Riscv2zisk::new(self.elf_path.display().to_string());
 
@@ -96,7 +97,7 @@ impl<F: PrimeField64> WitnessLibrary<F> for WitnessLib<F> {
         let zisk_rom = Arc::new(zisk_rom);
 
         // Step 3: Initialize the secondary state machines
-        let std = Std::new(wcm.get_pctx(), wcm.get_sctx(), self.shared_tables);
+        let std = Std::new(wcm.get_pctx(), wcm.get_sctx(), self.shared_tables)?;
         register_std(wcm, &std);
 
         let rom_sm = RomSM::new(zisk_rom.clone(), self.asm_rom_path.clone());
@@ -177,6 +178,7 @@ impl<F: PrimeField64> WitnessLibrary<F> for WitnessLib<F> {
         wcm.register_component(executor.clone());
 
         self.executor = Some(executor);
+        Ok(())
     }
 
     /// Returns the execution result of the witness computation.

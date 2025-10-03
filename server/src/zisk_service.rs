@@ -395,7 +395,7 @@ impl ZiskService {
         )
         .expect("Failed to initialize witness library");
 
-        proofman.register_witness(witness_lib.as_mut(), library);
+        proofman.register_witness(witness_lib.as_mut(), library)?;
 
         let witness_lib: Arc<dyn WitnessLibrary<Goldilocks> + Send + Sync> = Arc::from(witness_lib);
 

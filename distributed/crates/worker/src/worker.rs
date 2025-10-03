@@ -110,7 +110,7 @@ impl ProverConfig {
             None => DebugInfo::default(),
             Some(None) => DebugInfo::new_debug(),
             Some(Some(debug_value)) => {
-                json_to_debug_instances_map(proving_key.clone(), debug_value.clone())
+                json_to_debug_instances_map(proving_key.clone(), debug_value.clone())?
             }
         };
 
@@ -312,7 +312,7 @@ impl Worker {
         )
         .expect("Failed to initialize witness library");
 
-        proofman.register_witness(witness_lib.as_mut(), library);
+        proofman.register_witness(witness_lib.as_mut(), library)?;
 
         let witness_lib: Arc<dyn WitnessLibrary<Goldilocks> + Send + Sync> = Arc::from(witness_lib);
 
@@ -644,6 +644,7 @@ impl Worker {
                     agg_params.final_proof,
                     &options,
                 )
+                .unwrap() // TODO: Handle error gracefully
                 .map(|proof| proof.into_iter().map(|p| p.proof).collect())
                 .unwrap_or_default();
 

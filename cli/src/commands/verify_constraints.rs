@@ -101,7 +101,7 @@ impl ZiskVerifyConstraints {
             None => DebugInfo::default(),
             Some(None) => DebugInfo::new_debug(),
             Some(Some(debug_value)) => {
-                json_to_debug_instances_map(proving_key.clone(), debug_value.clone())
+                json_to_debug_instances_map(proving_key.clone(), debug_value.clone())?
             }
         };
 
@@ -218,7 +218,7 @@ impl ZiskVerifyConstraints {
                 )
                 .expect("Failed to initialize witness library");
 
-                proofman.register_witness(&mut *witness_lib, library);
+                proofman.register_witness(&mut *witness_lib, library)?;
 
                 proofman
                     .verify_proof_constraints_from_lib(self.input.clone(), &debug_info, false)

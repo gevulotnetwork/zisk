@@ -119,7 +119,7 @@ impl ZiskStats {
             None => DebugInfo::default(),
             Some(None) => DebugInfo::new_debug(),
             Some(Some(debug_value)) => {
-                json_to_debug_instances_map(proving_key.clone(), debug_value.clone())
+                json_to_debug_instances_map(proving_key.clone(), debug_value.clone())?
             }
         };
 
@@ -279,7 +279,7 @@ impl ZiskStats {
                 )
                 .expect("Failed to initialize witness library");
 
-                proofman.register_witness(&mut *witness_lib, library);
+                proofman.register_witness(&mut *witness_lib, library)?;
 
                 proofman
                     .compute_witness_from_lib(
