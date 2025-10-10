@@ -55,8 +55,9 @@ message WorkersListRequest {
 message LaunchProofRequest {
   string block_id = 1;
   uint32 compute_capacity = 2;
-  string input_path = 3;
+  string input_path = 3;  // Deprecated: kept for backward compatibility
   optional uint32 simulated_node = 4; // If set, indicates this is a simulated worker
+  bytes input_data = 5;  // Binary input data to be distributed to workers
 }
 
 // ============================================================================
@@ -223,11 +224,12 @@ enum TaskType {
 
 message ContributionParams {
   string block_id = 1;
-  string input_path = 2;
+  string input_path = 2;  // Deprecated: kept for backward compatibility
   uint32 rank_id = 3;
   uint32 total_workers = 4;
   repeated uint32 worker_allocation = 5;
   uint32 job_compute_units = 6;
+  bytes input_data = 7;  // Binary input data sent from coordinator to worker
 }
 
 message ProveParams {
