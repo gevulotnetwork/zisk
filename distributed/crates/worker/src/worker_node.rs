@@ -475,14 +475,39 @@ impl WorkerNodeGrpc {
             return Err(anyhow!("Expected ContributionParams for Partial Contribution task"));
         };
 
-        let job_id = JobId::from(request.job_id);
+        let job_id = JobId::from(request.job_id.clone());
         let input_path =
             self.worker_config.worker.inputs_folder.join(PathBuf::from(params.input_path));
+
+        // If we received binary input data, write it to the input_path
+        if !params.input_data.is_empty() {
+            // Ensure parent directory exists
+            if let Some(parent) = input_path.parent() {
+                std::fs::create_dir_all(parent).map_err(|e| {
+                    anyhow!("Failed to create directory {}: {}", parent.display(), e)
+                })?;
+            }
+
+            std::fs::write(&input_path, &params.input_data).map_err(|e| {
+                anyhow!("Failed to write input data to {}: {}", input_path.display(), e)
+            })?;
+
+            info!(
+                "Received {} bytes of input data for job {}, written to {}",
+                params.input_data.len(),
+                request.job_id,
+                input_path.display()
+            );
+        }
 
         // Validate that input_path is a subdirectory of inputs_folder
         Self::validate_subdir(&self.worker_config.worker.inputs_folder, &input_path)?;
 
-        let block = BlockContext { block_id: BlockId::from(params.block_id), input_path };
+        let block = BlockContext {
+            block_id: BlockId::from(params.block_id),
+            input_path,
+            input_data: Vec::new(),  // Worker doesn't need to store input_data since it's already on disk
+        };
 
         let job = self.worker.new_job(
             job_id,
