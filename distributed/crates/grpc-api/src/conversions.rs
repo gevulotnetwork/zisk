@@ -155,6 +155,7 @@ impl From<LaunchProofRequestDto> for LaunchProofRequest {
             compute_capacity: dto.compute_capacity,
             input_path: dto.input_path,
             simulated_node: dto.simulated_node,
+            input_data: dto.input_data,
         }
     }
 }
@@ -166,6 +167,7 @@ impl From<LaunchProofRequest> for LaunchProofRequestDto {
             compute_capacity: req.compute_capacity,
             input_path: req.input_path,
             simulated_node: req.simulated_node,
+            input_data: req.input_data,
         }
     }
 }
@@ -294,6 +296,7 @@ impl From<ContributionParamsDto> for ContributionParams {
             total_workers: dto.total_workers,
             worker_allocation: dto.worker_allocation,
             job_compute_units: dto.job_compute_units.compute_units,
+            input_data: dto.input_data,
         }
     }
 }

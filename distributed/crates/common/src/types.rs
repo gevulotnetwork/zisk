@@ -257,6 +257,7 @@ impl Job {
     pub fn new(
         block_id: BlockId,
         input_path: PathBuf,
+        input_data: Vec<u8>,
         compute_capacity: ComputeCapacity,
         selected_workers: Vec<WorkerId>,
         partitions: Vec<Vec<u32>>,
@@ -267,7 +268,7 @@ impl Job {
             start_times: HashMap::new(),
             duration_ms: None,
             state: JobState::Created,
-            block: BlockContext { block_id, input_path },
+            block: BlockContext { block_id, input_path, input_data },
             compute_capacity,
             workers: selected_workers,
             agg_worker_id: None,
@@ -390,6 +391,7 @@ pub struct JobResult {
 pub struct BlockContext {
     pub block_id: BlockId,
     pub input_path: PathBuf,
+    pub input_data: Vec<u8>,
 }
 
 #[repr(u8)]

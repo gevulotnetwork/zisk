@@ -67,6 +67,7 @@ pub struct LaunchProofRequestDto {
     pub compute_capacity: u32,
     pub input_path: String,
     pub simulated_node: Option<u32>,
+    pub input_data: Vec<u8>,
 }
 
 pub struct LaunchProofResponseDto {
@@ -135,6 +136,7 @@ pub struct ContributionParamsDto {
     pub total_workers: u32,
     pub worker_allocation: Vec<u32>,
     pub job_compute_units: ComputeCapacity,
+    pub input_data: Vec<u8>,
 }
 
 pub struct ProveParamsDto {

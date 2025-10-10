@@ -315,6 +315,7 @@ impl Coordinator {
                 request.block_id.clone(),
                 required_compute_capacity,
                 request.input_path.clone(),
+                request.input_data.clone(),
                 request.simulated_node,
             )
             .await?;
@@ -514,6 +515,7 @@ impl Coordinator {
         block_id: BlockId,
         required_compute_capacity: ComputeCapacity,
         input_path: String,
+        input_data: Vec<u8>,
         simulated_node: Option<u32>,
     ) -> CoordinatorResult<Job> {
         let execution_mode = if let Some(node) = simulated_node {
@@ -534,6 +536,7 @@ impl Coordinator {
         Ok(Job::new(
             block_id,
             PathBuf::from(input_path),
+            input_data,
             required_compute_capacity,
             selected_workers,
             partitions,
@@ -606,6 +609,7 @@ impl Coordinator {
                     total_workers: active_workers.len() as u32,
                     worker_allocation: job.partitions[rank_id].clone(),
                     job_compute_units: required_compute_capacity,
+                    input_data: job.block.input_data.clone(),
                 }),
             };
             let req = CoordinatorMessageDto::ExecuteTaskRequest(req);

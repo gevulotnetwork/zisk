@@ -24,11 +24,16 @@ pub async fn handle(
     let channel = Channel::from_shared(coordinator_url)?.connect().await?;
     let mut client = ZiskDistributedApiClient::new(channel);
 
+    // Read input file
+    let input_data = std::fs::read(&input_path)?;
+    info!("Read {} bytes from input file: {}", input_data.len(), input_path);
+
     let launch_proof_request = LaunchProofRequest {
         block_id: "0x1234567890abcdef".into(), // TODO! Placeholder block ID
         compute_capacity,
         input_path,
         simulated_node,
+        input_data,
     };
 
     // Make the RPC call
