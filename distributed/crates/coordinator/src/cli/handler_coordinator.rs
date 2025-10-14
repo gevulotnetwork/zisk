@@ -50,9 +50,15 @@ pub async fn handle(
     let shutdown_signal = create_shutdown_signal();
 
     // Run the gRPC server with shutdown signal
+
+    // Set max message size for receiving large input data.
+    let max_message_size = 50 * 1024 * 1024; // 50MB
+    let service = ZiskDistributedApiServer::new(coordinator_service)
+        .max_decoding_message_size(max_message_size);
+
     tokio::select! {
         result = Server::builder()
-            .add_service(ZiskDistributedApiServer::new(coordinator_service))
+            .add_service(service)
             .serve(grpc_addr) => {
             match result {
                 Ok(_) => {
