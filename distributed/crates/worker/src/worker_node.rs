@@ -112,7 +112,10 @@ impl WorkerNodeGrpc {
 
         let channel =
             Channel::from_shared(self.worker_config.coordinator.url.clone())?.connect().await?;
-        let mut client = zisk_distributed_api_client::ZiskDistributedApiClient::new(channel);
+        // Set max message size for receiving large input data.
+        let max_message_size = 50 * 1024 * 1024; // 50MB
+        let mut client = zisk_distributed_api_client::ZiskDistributedApiClient::new(channel)
+            .max_decoding_message_size(max_message_size);
 
         // Create bidirectional stream
         let (message_sender, message_receiver) = mpsc::unbounded_channel();
